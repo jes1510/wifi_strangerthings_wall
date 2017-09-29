@@ -13,8 +13,8 @@
 #define PIN            2      // Only 2 GPIO available
 #define NUMPIXELS      50     // 50 lights to a string, only one string
 
-const char* ssid = "*****";
-const char* password = "****";
+const char* ssid = "yourssidhere";
+const char* password = "Yourpasswordhere";
 
 WiFiServer server(80);  // Server on port 80
 
@@ -25,6 +25,7 @@ int offDelay = 250;   // Off time between letters
 
 void setup() 
 {
+  int pixel = 0;
   Serial.begin(115200);
   pixels.begin(); 
   Serial.printf("\nConnecting to %s ", ssid);
@@ -32,8 +33,19 @@ void setup()
   while (WiFi.status() != WL_CONNECTED)         // Wait for a connection
   {
     delay(500);
-    Serial.print(".");    
+    Serial.print(".");   
+    pixels.setPixelColor(pixel, pixels.Color(0,0,255));   // Sequentially turn on the pixels to signify waiting
+    pixels.show(); 
+    pixel ++;
+    if (pixel >= NUMPIXELS) {
+      pixel = 0;      
+    }
   }
+
+  allPixels(0,255,0); // Flash green to show good connection
+  delay(1000);
+  allPixels(0,0,0);   // clear them
+  
   Serial.println(" connected");
   server.begin();                             
 }
@@ -190,10 +202,17 @@ void parse(String readString) {
         default:
           break;
       }
-    }     readString = "";
+    }     
   }
   
 
+void allPixels(int r, int g, int b) {
+  int i;
+  for (i=0; i < NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pixels.Color(r,g,b));
+  }
+  pixels.show();
+}
 
 void lightUp(int letter)
 {
@@ -204,6 +223,8 @@ void lightUp(int letter)
   pixels.show();
   delay(offDelay);
 }
+
+
 
 
 
