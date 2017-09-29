@@ -10,37 +10,32 @@
 #include <ESP8266WiFi.h>
 #include "letters.h"
 
-#define PIN            2
-#define NUMPIXELS      50
+#define PIN            2      // Only 2 GPIO available
+#define NUMPIXELS      50     // 50 lights to a string, only one string
 
-const char* ssid = "silence";
-const char* password = "ilovesugarcookies";
+const char* ssid = "*****";
+const char* password = "****";
 
-WiFiServer server(80);
- 
+WiFiServer server(80);  // Server on port 80
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ800);
 
-int delayVal = 500; 
-int offDelay = 250;
-
-String readString;
+int delayVal = 500;   // How long to display the letter
+int offDelay = 250;   // Off time between letters
 
 void setup() 
 {
   Serial.begin(115200);
   pixels.begin(); 
-
   Serial.printf("\nConnecting to %s ", ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
+  WiFi.begin(ssid, password);                   // build a simple server
+  while (WiFi.status() != WL_CONNECTED)         // Wait for a connection
   {
     delay(500);
-    Serial.print(".");
+    Serial.print(".");    
   }
   Serial.println(" connected");
-
-  server.begin();
+  server.begin();                             
 }
 
 
@@ -49,8 +44,7 @@ void setup()
 void loop()
 {
 
-  WiFiClient client = server.available();
-  // wait for a client (web browser) to connect
+  WiFiClient client = server.available();   // check for a client
   if (client)
   {
     Serial.println("\n[Client connected]");
@@ -58,7 +52,7 @@ void loop()
     {
       if (client.available())
       {
-        String line = client.readStringUntil('\r');
+        String line = client.readStringUntil('\r');   // read up to a carriage return
         Serial.print("Received: ");
         Serial.println(line);
         parse(line);
@@ -73,7 +67,7 @@ void loop()
   }
 }
 
-
+// Parse the string into characters and call the light driver
 void parse(String readString) {
     for (int i=0; i<readString.length() + 1; i++) { 
       Serial.print("Parsing: ");
