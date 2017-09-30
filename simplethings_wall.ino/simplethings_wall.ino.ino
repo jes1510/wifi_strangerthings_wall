@@ -13,8 +13,8 @@
 #define PIN            2      // Only 2 GPIO available
 #define NUMPIXELS      50     // 50 lights to a string, only one string
 
-const char* ssid = "yourssidhere";
-const char* password = "Yourpasswordhere";
+const char* ssid = "ssidhere";
+const char* password = "yourpassword";
 
 WiFiServer server(80);  // Server on port 80
 
@@ -38,6 +38,9 @@ void setup()
     pixels.show(); 
     pixel ++;
     if (pixel >= NUMPIXELS) {
+      allPixels(255,0,0); // Flash RED to show no connection yet
+      delay(2000);
+      allPixels(0,0,0);   // clear them
       pixel = 0;      
     }
   }
