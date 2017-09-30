@@ -43,7 +43,7 @@ void setup()
   }
 
   allPixels(0,255,0); // Flash green to show good connection
-  delay(1000);
+  delay(2000);
   allPixels(0,0,0);   // clear them
   
   Serial.println(" connected");
