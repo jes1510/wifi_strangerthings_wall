@@ -1,0 +1,19 @@
+
+String run = "Run";
+String gorgon = "The gorgon is coming";
+String upsideDown = "Help Im trapped in the upside down";
+String lie = "friends dont lie";
+String barb = "where is barbara";
+String boo = "boo";
+String quiet = "Be quiet there are monsters near";
+String lost = "Help me Im lost";
+String barbDead = "barbara is dead";
+String halloween = "happy halloween";
+String behind = "the monster is behind you";
+String scared = "Im scared";
+
+
+String phrases[12] = {run, gorgon, lie, barb, boo, quiet, lost, barbDead, halloween, behind, scared};
+
+
+

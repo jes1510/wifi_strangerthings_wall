@@ -9,12 +9,15 @@
 #include <Adafruit_NeoPixel.h>
 #include <ESP8266WiFi.h>
 #include "letters.h"
+#include "phrases.h"
 
 #define PIN            2      // Only 2 GPIO available
 #define NUMPIXELS      50     // 50 lights to a string, only one string
 
-const char* ssid = "ssidhere";
-const char* password = "yourpassword";
+long lastTime = millis();
+
+const char* ssid = "silence";
+const char* password = "ilovesugarcookies";
 
 WiFiServer server(80);  // Server on port 80
 
@@ -22,6 +25,8 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ80
 
 int delayVal = 500;   // How long to display the letter
 int offDelay = 250;   // Off time between letters
+int randomUpdateTime = 5000; 
+
 
 void setup() 
 {
@@ -50,7 +55,8 @@ void setup()
   allPixels(0,0,0);   // clear them
   
   Serial.println(" connected");
-  server.begin();                             
+  server.begin();      
+  lastTime = millis();                   
 }
 
 
@@ -70,16 +76,25 @@ void loop()
         String line = client.readStringUntil('\r');   // read up to a carriage return
         Serial.print("Received: ");
         Serial.println(line);
+        allPixels(0,0,0);
+        delay(1000);
         parse(line);
-         
+        delay(1000);         
       }
     }
     delay(1); // give the web browser time to receive the data
-
     // close the connection:
     client.stop();
     Serial.println("[Client disonnected]");
   }
+  else {
+    if ((millis() - lastTime) > randomUpdateTime) {
+      allRandom();
+      lastTime = millis();
+    }
+  }
+
+
 }
 
 // Parse the string into characters and call the light driver
@@ -217,9 +232,9 @@ void allPixels(int r, int g, int b) {
   pixels.show();
 }
 
-void lightUp(int letter)
-{
-  pixels.setPixelColor(letter - 1, pixels.Color(255,255,255));
+
+void lightUp(int letter) {
+  pixels.setPixelColor(letter - 1, pixels.Color(128,128,128));
   pixels.show();
   delay(delayVal);
   pixels.setPixelColor(letter - 1, pixels.Color(0,0,0));  
@@ -228,6 +243,30 @@ void lightUp(int letter)
 }
 
 
+// Set an individual lamp to a random color (R, G, or B)
+// Pass the pixel # , brightness is optional
+void randomColor (int pixel, int brightness = 255) {
+  int randomColor;
+  randomColor = random(3);
+  if (randomColor == 0) {
+    pixels.setPixelColor(pixel, pixels.Color(brightness,0,0));
+  }
+  if (randomColor == 1) {
+    pixels.setPixelColor(pixel, pixels.Color(0,brightness,0));
+  }
 
+  if (randomColor == 2) {
+    pixels.setPixelColor(pixel, pixels.Color(0,0,brightness));
+  }
+}
+
+
+void allRandom() {
+  int i;
+  for (i=0; i < NUMPIXELS; i++) {
+    randomColor(i, 64);
+  }
+  pixels.show();
+}
 
 

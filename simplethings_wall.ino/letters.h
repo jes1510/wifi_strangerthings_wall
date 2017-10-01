@@ -3,7 +3,7 @@ Alphabet associated with LED position
 */
 
 
-#define A	37
+#define A	38
 #define B	39
 #define C	41
 #define D	43
