@@ -27,6 +27,9 @@ int delayVal = 500;   // How long to display the letter
 int offDelay = 250;   // Off time between letters
 int randomUpdateTime = 5000; 
 
+long lastRandomPhraseTime = millis();
+int randomPhraseTime = random(30, 60) * 1000;
+
 
 void setup() 
 {
@@ -56,7 +59,9 @@ void setup()
   
   Serial.println(" connected");
   server.begin();      
-  lastTime = millis();                   
+  lastTime = millis();      
+  lastRandomPhraseTime = millis();    
+           
 }
 
 
@@ -64,6 +69,7 @@ void setup()
 
 void loop()
 {
+  int phraseIndex;
 
   WiFiClient client = server.available();   // check for a client
   if (client)
@@ -91,17 +97,41 @@ void loop()
     if ((millis() - lastTime) > randomUpdateTime) {
       allRandom();
       lastTime = millis();
+
+    }    
+
+    if ((millis() - lastRandomPhraseTime) > randomPhraseTime) {
+      Serial.print ("Last Time: ");
+      Serial.print (lastRandomPhraseTime);
+      Serial.print("\t");
+      Serial.print("phrase time: ");
+      Serial.print(randomPhraseTime);
+      Serial.print("\tDiff: ");
+      Serial.print(millis() - lastRandomPhraseTime);
+      Serial.print("\t");
+      phraseIndex = random(14);
+     
+      parse(phrases[phraseIndex]);
+      
+      Serial.println(phrases[phraseIndex]);
+      lastRandomPhraseTime = millis();
+      randomPhraseTime = random(30, 60) * 1000;
+
+      Serial.print("New randomPhraseTime:");
+      Serial.println(randomPhraseTime);
     }
   }
-
-
 }
 
 // Parse the string into characters and call the light driver
 void parse(String readString) {
+    powerBlink();      
+    allPixels(0,0,0);   
+    delay(1000); 
+    
     for (int i=0; i<readString.length() + 1; i++) { 
-      Serial.print("Parsing: ");
-      Serial.println(readString[i]);
+   //   Serial.print("Parsing: ");
+   //   Serial.println(readString[i]);
       switch(readString[i])
       {  
         case '\\' :
@@ -220,7 +250,8 @@ void parse(String readString) {
         default:
           break;
       }
-    }     
+    }
+    delay(1000);     
   }
   
 
@@ -247,16 +278,12 @@ void lightUp(int letter) {
 // Pass the pixel # , brightness is optional
 void randomColor (int pixel, int brightness = 255) {
   int randomColor;
-  randomColor = random(3);
+  randomColor = random(2);
   if (randomColor == 0) {
-    pixels.setPixelColor(pixel, pixels.Color(brightness,0,0));
+    pixels.setPixelColor(pixel, pixels.Color(brightness * 0.47 ,0,brightness));   // Purple
   }
   if (randomColor == 1) {
-    pixels.setPixelColor(pixel, pixels.Color(0,brightness,0));
-  }
-
-  if (randomColor == 2) {
-    pixels.setPixelColor(pixel, pixels.Color(0,0,brightness));
+    pixels.setPixelColor(pixel, pixels.Color(brightness,brightness * 0.33,0));    // Orange
   }
 }
 
@@ -269,4 +296,18 @@ void allRandom() {
   pixels.show();
 }
 
+void powerBlink() {
+  int i;
+  allPixels(0,0,0);
+  delay(250);
+  allRandom();
+  pixels.show();
+  delay(100);
+  allPixels(0,0,0);
+  delay(250);
+  allRandom();
+  pixels.show();
+  delay(500);
+  
+}
 

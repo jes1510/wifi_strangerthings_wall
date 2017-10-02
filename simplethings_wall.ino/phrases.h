@@ -11,9 +11,12 @@ String barbDead = "barbara is dead";
 String halloween = "happy halloween";
 String behind = "the monster is behind you";
 String scared = "Im scared";
+String watch = "Watch Stranger Things";
+String candy = "Can I have some candy too";
 
 
-String phrases[12] = {run, gorgon, lie, barb, boo, quiet, lost, barbDead, halloween, behind, scared};
+
+String phrases[13] = {run, gorgon, lie, barb, boo, quiet, lost, barbDead, halloween, behind, scared, watch, candy};
 
 
 
