@@ -16,8 +16,8 @@
 
 long lastTime = millis();
 
-const char* ssid = "silence";
-const char* password = "ilovesugarcookies";
+const char* ssid = "YOURSSID";
+const char* password = "YOURPASSWORD";
 
 WiFiServer server(80);  // Server on port 80
 
